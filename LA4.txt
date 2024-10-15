@@ -1,0 +1,66 @@
+create table borrower(
+roll int primary key,
+ name varchar(50) not null,
+dateofissue date,
+bkname varchar(50),
+ status char(2));
+
+create table fine(roll int references borrower(roll),date_1 date,amt int);
+
+insert into borrower values(1,'Riddesh','23-Aug-2024','Vikings','I');
+insert into borrower values(2,'sagar','28-May-2024','fire wing','I');
+insert into borrower values(3,'Pinkey','9-Jan-2024','Fairy tale','I');
+insert into borrower values(4,'Holkar','24-Aug-2024','Vikings','I');
+
+set serveroutput on;
+declare
+roll_1 int;
+name_bk varchar(50);
+dt_curr date:=sysdate;
+exp exception;
+temp date;
+diff int;
+begin
+roll_1:=&roll_1;
+name_bk:='&name_bk';
+select dateofissue into temp from borrower where roll=roll_1 and bkname=name_bk;
+dbms_output.put_line(temp);
+diff:=dt_curr-temp;
+if (sql%rowcount=0) then
+raise exp;
+elsif (diff>=15 and diff<=30) then
+insert into fine values(roll_1,temp,(diff*5));
+dbms_output.put_line('Fine of 5 rupee per day');
+elsif (diff>30) then
+insert into fine values(roll_1,temp,(diff*50));
+dbms_output.put_line('Fine of 50 rupee per day');
+
+else 
+dbms_output.put_line('No fine');
+end if;
+exception
+when exp then
+dbms_output.put_line('Roll no not found');
+when others then
+dbms_output.put_line('Error');
+end;
+/
+
+
+declare
+roll_1 int;
+temp char(2);
+name_bk varchar(50);
+begin
+roll_1:=&roll_1;
+name_bk:='&name_bk';
+select status into temp from borrower where roll=roll_1 and bkname=name_bk;
+if temp='I' then
+update borrower
+set status='R' where roll=roll_1 and bkname=name_bk;
+dbms_output.put_line('updated to return');
+else
+dbms_output.put_line('already updated to return');
+end if;
+end;
+/

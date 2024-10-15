@@ -1,0 +1,56 @@
+create table result(
+roll int primary key,
+name varchar(50) ,
+class varchar(30));
+
+create table stud_marks(
+name varchar(50),
+total_marks int);
+
+insert into stud_marks values('Riddesh',1000);
+insert into stud_marks values('Sagar',900);
+insert into stud_marks values('Holkar',990);
+insert into stud_marks values('Digambar',989);
+insert into stud_marks values('Rahul',1500);
+
+create or replace procedure proc_grade(x in int,y in varchar2) 
+is 
+begin
+if (x<=1500 and x>=990) then
+insert into result values(incremental.nextval,y,'distinction');
+elsif (x<=989 and x>=900) then
+insert into result values(incremental.nextval,y,'first class');
+elsif (x<=899 and x>=825) then
+insert into result values(incremental.nextval,y,'higher second class');
+else 
+dbms_output.put_line('Failed');
+end if;
+end;
+/
+
+
+create sequence incremental
+start with 1
+increment by 1;
+
+
+
+declare
+cursor exp1 is
+select total_marks from stud_marks;
+cursor exp2 is
+select name from stud_marks;
+x int;
+y varchar(50);
+begin
+open exp1;
+open exp2;
+loop
+fetch exp1 into x;
+fetch exp2 into y;
+proc_grade(x,y);
+exit when  exp1%notfound or exp2%notfound;
+end loop;
+end;
+/
+
