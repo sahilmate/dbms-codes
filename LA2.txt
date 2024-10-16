@@ -1,252 +1,197 @@
-create Database Assignment1;
-use Assignment1;
+-- Part A: DDL Statements
 
-create table Departments( dept_id INT PRIMARY KEY, dept_name VARCHAR(10) );
-
-create table Professors( 
-prof_id INT PRIMARY KEY, prof_fname VARCHAR(100), prof_lname VARCHAR(100), designation VARCHAR(100), salary INT, doj DATE, email VARCHAR(255), phone INT, city VARCHAR(100) );
-alter table Professors add dept_id INT;
-alter table Professors add foreign key(dept_id) references Departments(dept_id) on delete cascade;
-
-create table Shift( prof_id INT, shift VARCHAR(100), working_hours INT );
-alter table Shift add foreign key(prof_id) references Professors(prof_id) on delete cascade;
-
-create table works( dept_id INT, prof_id INT, duration YEAR, foreign key (dept_id) references Departments on delete cascade, foreign key (prof_id) references Professors on delete cascade);
-
-insert into Departments(dept_id,dept_name) 
-values (1, 'FE'), (2,'CE'),(3,'IT'),(4,'ENTC');
-
-insert into Professors(prof_id,prof_fname,prof_lname,designation,salary,doj,email,phone,city,dept_id) 
-values (1,'Shivaji','Mundhe','Ast. Prof.',40000,'2009-07-01','svmundhe@pict.edu','24371101','Pune',1),
-	(2,'Nikhil','Sangade','Ast. Prof.',30000,'2019-03-21','nvsangade@pict.edu','9762172013','Pune',1),
-	(3,'Kartik','Nandi','Prof.',50000,'1990-07-01','kcnandi@pict.edu','24371101','Pune',1),
-	(4,'Urmila','Pawar','Ast. Prof.',40000,'2016-01-01','uspawar@pict.edu','7083664201','Mumbai',2),
-	(5,'Bhumesh','Masram','Ast. Prof.',30000,'2017-07-15','bsmasram@pict.edu','24371101','Mumbai',2),
-	(6,'Archana','Ghotkar','Asc. Prof.',50000,'2000-03-01','aaghotkar@pict.edu','24371101','Pune',2),
-	(7,'Girish','Mundada','Prof.',50000,'1900-09-01','gsmundada@pict.edu','24371101','Nashik',4),
-	(8,'Chetan','Pawar','Ast. Prof.',15000,'2018-02-01','ccpawar@pict.edu','9028648563','Jalgaon',4),
-	(9,'Shweta','Dharmadhikari','Asc. Prof.',40000,'1995-12-31','scdharmadhikari@pict.edu','24371101','Pune',3),
-	(10,'Emmanuel','M','Prof.',50000,'2000-08-01','emmanuelm@pict.edu','24371101','Mumbai',3),
-	(11,'Mayuresh','Chavan','Ast. Prof',25000,'2015-01-01','mschavan@pict.edu','24567479','Sangli',2);
-	
-
-insert into Shift(shift,working_hours,prof_id)
-values('morning',8,1),
-	('morning',8,2),
-	('afternoon',10,3),
-	('morning',8,4),
-	('afternoon',10,5),
-	('morning',8,6),
-	('morning',8,7),
-	('morning',8,8),
-	('afternoon',10,9),
-	('morning',8,10);
-	
-	
-insert into works(dept_id,prof_id,duration)
-values (1,1,9),
-	(1,2,4),
-	(1,3,27),
-	(2,4,7),
-	(2,5,3),
-	(2,6,20),
-	(4,7,29),
-	(4,8,3),
-	(3,9,16),
-	(3,10,21);
-	
-	
-/*2. Display all professors details with city pune and mumbai and professor first name starting with 'a' or 'd'.*/
-	
-select * from Professors where ((city='Pune' or city='Mumbai') and  (prof_fname like 'A%' or prof_fname like 'D%'));
-/*mysql> select * from Professors where ((city='Pune' or city='Mumbai') and  (prof_fname like 'A%' or prof_fname like 'D%'));
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+------+---------+
-| prof_id | prof_fname | prof_lname | designation | salary | doj        | email              | phone    | city | dept_id |
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+------+---------+
-|       6 | Archana    | Ghotkar    | Asc. Prof.  |  50000 | 2000-03-01 | aaghotkar@pict.edu | 24371101 | Pune |       2 |
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+------+---------+
-1 row in set (0.00 sec)
-*/
-
-/*3. list the number of different cities of professors.(use of distinct*/
-select count(distinct city) from Professors;
-/*
-mysql> select count(distinct city) from Professors;
-+----------------------+
-| count(distinct city) |
-+----------------------+
-|                    5 |
-+----------------------+
-1 row in set (0.00 sec)
-*/
-
-
-/*4. Give 5% increase in salary of the professors with date of joining 1-1-2015.*/
-update Professors set salary=salary * 1.05 where date(doj) = '2015-01-01';
-/*mysql> select * from Professors;
-+---------+------------+---------------+-------------+--------+------------+--------------------------+------------+---------+---------+
-| prof_id | prof_fname | prof_lname    | designation | salary | doj        | email                    | phone      | city    | dept_id |
-+---------+------------+---------------+-------------+--------+------------+--------------------------+------------+---------+---------+
-|       1 | Shivaji    | Mundhe        | Ast. Prof.  |  40000 | 2009-07-01 | svmundhe@pict.edu        | 24371101   | Pune    |       1 |
-|       2 | Nikhil     | Sangade       | Ast. Prof.  |  30000 | 2019-03-21 | nvsangade@pict.edu       | 9762172013 | Pune    |       1 |
-|       3 | Kartik     | Nandi         | Prof.       |  50000 | 1990-07-01 | kcnandi@pict.edu         | 24371101   | Pune    |       1 |
-|       4 | Urmila     | Pawar         | Ast. Prof.  |  40000 | 2016-01-01 | uspawar@pict.edu         | 7083664201 | Mumbai  |       2 |
-|       5 | Bhumesh    | Masram        | Ast. Prof.  |  30000 | 2017-07-15 | bsmasram@pict.edu        | 24371101   | Mumbai  |       2 |
-|       6 | Archana    | Ghotkar       | Asc. Prof.  |  50000 | 2000-03-01 | aaghotkar@pict.edu       | 24371101   | Pune    |       2 |
-|       7 | Girish     | Mundada       | Prof.       |  50000 | 1900-09-01 | gsmundada@pict.edu       | 24371101   | Nashik  |       4 |
-|       8 | Chetan     | Pawar         | Ast. Prof.  |  15000 | 2018-02-01 | ccpawar@pict.edu         | 9028648563 | Jalgaon |       4 |
-|       9 | Shweta     | Dharmadhikari | Asc. Prof.  |  40000 | 1995-12-31 | scdharmadhikari@pict.edu | 24371101   | Pune    |       3 |
-|      10 | Emmanuel   | M             | Prof.       |  50000 | 2000-08-01 | emmanuelm@pict.edu       | 24371101   | Mumbai  |       3 |
-|      11 | Mayuresh   | Chavan        | Ast. Prof   |  26250 | 2015-01-01 | mschavan@pict.edu        | 24567479   | Sangli  |       2 |
-+---------+------------+---------------+-------------+--------+------------+--------------------------+------------+---------+---------+
-11 rows in set (0.00 sec)
-*/
-
-/*6. Find the names of professors belonging to pune or mumbai*/
-select prof_fname from Professors where (city='Pune' or city='Mumbai');
-/*
-mysql> select prof_fname from Professors where (city='Pune' or city='Mumbai');
-+------------+
-| prof_fname |
-+------------+
-| Shivaji    |
-| Nikhil     |
-| Kartik     |
-| Urmila     |
-| Bhumesh    |
-| Archana    |
-| Shweta     |
-| Emmanuel   |
-+------------+
-8 rows in set (0.00 sec)
-*/
-
-/*6. Find the names of professors belonging to pune or mumbai*/
-select * from Professors where date(doj) = '2015-01-01' or date(doj) = '2016-01-01';
-/*
-mysql> select * from Professors where date(doj) = '2015-01-01' or date(doj) = '2016-01-01';
-+---------+------------+------------+-------------+--------+------------+-------------------+------------+--------+---------+
-| prof_id | prof_fname | prof_lname | designation | salary | doj        | email             | phone      | city   | dept_id |
-+---------+------------+------------+-------------+--------+------------+-------------------+------------+--------+---------+
-|       4 | Urmila     | Pawar      | Ast. Prof.  |  40000 | 2016-01-01 | uspawar@pict.edu  | 7083664201 | Mumbai |       2 |
-|      11 | Mayuresh   | Chavan     | Ast. Prof   |  26250 | 2015-01-01 | mschavan@pict.edu | 24567479   | Sangli |       2 |
-+---------+------------+------------+-------------+--------+------------+-------------------+------------+--------+---------+
-2 rows in set (0.00 sec)
-*/
-
-
-/*7. Find the professors who joined on date 1-1-2015 as well as in 1-1-2016*/
-select * from Professors where salary = (select max(salary) from Professors);
-
-/*
-mysql> select * from Professors where salary = (select max(salary) from Professors);
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+--------+---------+
-| prof_id | prof_fname | prof_lname | designation | salary | doj        | email              | phone    | city   | dept_id |
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+--------+---------+
-|       3 | Kartik     | Nandi      | Prof.       |  50000 | 1990-07-01 | kcnandi@pict.edu   | 24371101 | Pune   |       1 |
-|       6 | Archana    | Ghotkar    | Asc. Prof.  |  50000 | 2000-03-01 | aaghotkar@pict.edu | 24371101 | Pune   |       2 |
-|       7 | Girish     | Mundada    | Prof.       |  50000 | 1900-09-01 | gsmundada@pict.edu | 24371101 | Nashik |       4 |
-|      10 | Emmanuel   | M          | Prof.       |  50000 | 2000-08-01 | emmanuelm@pict.edu | 24371101 | Mumbai |       3 |
-+---------+------------+------------+-------------+--------+------------+--------------------+----------+--------+---------+
-4 rows in set (0.00 sec)
-
-*/
-
-
-/*8. Find the professor having maximum salary and names of professors having salary between 10,000 and 20,000.*/
-select prof_fname, prof_lname from Professors where salary between 10000 and 20000;
-/*
-mysql> select prof_fname, prof_lname from Professors where salary between 10000 and 20000;
-+------------+------------+
-| prof_fname | prof_lname |
-+------------+------------+
-| Chetan     | Pawar      |
-+------------+------------+
-1 row in set (0.00 sec)
-*/
-
-/*9. Display all professors name with salary and date of joining with decreasing order of salary.*/
-select prof_fname,prof_lname,salary,doj from Professors order by salary DESC;
-/*
-mysql> select prof_fname,prof_lname,salary,doj from Professors order by salary DESC;
-+------------+---------------+--------+------------+
-| prof_fname | prof_lname    | salary | doj        |
-+------------+---------------+--------+------------+
-| Kartik     | Nandi         |  50000 | 1990-07-01 |
-| Archana    | Ghotkar       |  50000 | 2000-03-01 |
-| Girish     | Mundada       |  50000 | 1900-09-01 |
-| Emmanuel   | M             |  50000 | 2000-08-01 |
-| Shivaji    | Mundhe        |  40000 | 2009-07-01 |
-| Urmila     | Pawar         |  40000 | 2016-01-01 |
-| Shweta     | Dharmadhikari |  40000 | 1995-12-31 |
-| Nikhil     | Sangade       |  30000 | 2019-03-21 |
-| Bhumesh    | Masram        |  30000 | 2017-07-15 |
-| Mayuresh   | Chavan        |  26250 | 2015-01-01 |
-| Chetan     | Pawar         |  15000 | 2018-02-01 |
-+------------+---------------+--------+------------+
-11 rows in set (0.00 sec)
-*/
-
-
-
-/*10. Display professors name, date of joining and dept_id with salary 30000, 40000 and 50000*/
-create view salary_30k as select p.prof_fname,p.prof_lname,p.doj,p.dept_id from Professors as p where salary = 30000;	
-/*
-mysql> select * from salary_30k;
-+------------+------------+------------+---------+
-| prof_fname | prof_lname | doj        | dept_id |
-+------------+------------+------------+---------+
-| Nikhil     | Sangade    | 2019-03-21 |       1 |
-| Bhumesh    | Masram     | 2017-07-15 |       2 |
-+------------+------------+------------+---------+
-2 rows in set (0.00 sec)
-*/
-create view salary_40k as select p.prof_fname,p.prof_lname,p.doj,p.dept_id,d.dept_name from Professors as p inner join Departments as d on d.dept_id = p.dept_id where salary = 40000;
-/*
-mysql> select * from salary_40k;
-+------------+---------------+------------+---------+-----------+
-| prof_fname | prof_lname    | doj        | dept_id | dept_name |
-+------------+---------------+------------+---------+-----------+
-| Shivaji    | Mundhe        | 2009-07-01 |       1 | FE        |
-| Urmila     | Pawar         | 2016-01-01 |       2 | CE        |
-| Shweta     | Dharmadhikari | 1995-12-31 |       3 | IT        |
-+------------+---------------+------------+---------+-----------+
-3 rows in set (0.00 sec)
-*/
-
-create view salary_50k as select p.prof_fname,p.prof_lname,p.doj,p.dept_id,d.dept_name from Professors as p inner join Departments as d on d.dept_id = p.dept_id where salary = 50000;
-/*
-mysql> select * from salary_50k;
-+------------+------------+------------+---------+-----------+
-| prof_fname | prof_lname | doj        | dept_id | dept_name |
-+------------+------------+------------+---------+-----------+
-| Kartik     | Nandi      | 1990-07-01 |       1 | FE        |
-| Archana    | Ghotkar    | 2000-03-01 |       2 | CE        |
-| Girish     | Mundada    | 1900-09-01 |       4 | ENTC      |
-| Emmanuel   | M          | 2000-08-01 |       3 | IT        |
-+------------+------------+------------+---------+-----------+
-4 rows in set (0.00 sec)
-*/
-
-/*Indices Example*/
-create index simpleIndex on Professors(salary);
-create index compositeIndex on Professors(prof_fname,prof_lname);
-create unique index uniqueIndex on Professors(email);
-
-
-
-/*Sequences Example*/
-create table sequences_example(
-    emp_no INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50)
+-- Create Employee table
+CREATE TABLE Employee (
+    emp_id VARCHAR2(10) PRIMARY KEY,
+    emp_name VARCHAR2(20),
+    emp_desc VARCHAR2(30),
+    dept_name VARCHAR2(20),
+    emp_city VARCHAR2(15)
 );
-INSERT INTO sequences_example(first_name,last_name)
-VALUES('John','Doe'),
-      ('Mary','Jane');
-DELETE FROM sequences_example
-WHERE emp_no = 2;
-INSERT INTO sequences_example(first_name,last_name)
-VALUES('Jack','Lee');
-	
 
+-- Insert records into Employee table
+INSERT INTO Employee VALUES ('10001', 'Vivek', 'Team Lead', 'Marketing', 'Mumbai');
+INSERT INTO Employee VALUES ('10002', 'Shivam', 'Supervisor', 'Operations', 'Bangalore');
+INSERT INTO Employee VALUES ('10003', 'Aryan', 'Tech Manager', 'IT Support', 'Chennai');
+INSERT INTO Employee VALUES ('10004', 'Omkar', 'Project Manager', 'Development', 'Pune');
+INSERT INTO Employee VALUES ('10005', 'Siddarth', 'Customer Rep', 'CustomerSuccess', 'Pune');
+INSERT INTO Employee VALUES ('10006', 'Sahil', 'HR Assistant', 'HR', 'Pune');
+INSERT INTO Employee VALUES ('10007', 'Varad', 'Operations Lead', 'Operations', 'Bangalore');
+INSERT INTO Employee VALUES ('10008', 'Atharva', 'Marketing Exec', 'Marketing', 'Chennai');
+INSERT INTO Employee VALUES ('10009', 'Yashraj', 'Support Analyst', 'IT Support', 'Pune');
+INSERT INTO Employee VALUES ('10010', 'Ishant', 'DevOps Engineer', 'Development', 'Mumbai');
+
+-- Create Department table
+CREATE TABLE Department (
+    dept_name VARCHAR2(20) PRIMARY KEY,
+    manager_name VARCHAR2(20)
+);
+
+-- Insert records into Department table
+INSERT INTO Department VALUES ('Marketing', 'Soham');
+INSERT INTO Department VALUES ('Operations', 'Karunya');
+INSERT INTO Department VALUES ('IT Support', 'Guruprasad');
+INSERT INTO Department VALUES ('Development', 'Parimal');
+INSERT INTO Department VALUES ('CustomerSuccess', 'Hemant');
+INSERT INTO Department VALUES ('HR', 'Rohit');
+
+-- Create Workers table
+CREATE TABLE Workers (
+    emp_name VARCHAR2(20),
+    dept_name VARCHAR2(20),
+    emp_salary NUMBER(7) NOT NULL,
+    PRIMARY KEY(emp_name),
+    FOREIGN KEY(dept_name) REFERENCES Department(dept_name)
+);
+
+-- Insert records into Workers table
+INSERT INTO Workers VALUES ('Soham', 'Marketing', 45000);
+INSERT INTO Workers VALUES ('Vivek', 'Operations', 38000);
+INSERT INTO Workers VALUES ('Aryan', 'IT Support', 55000);
+INSERT INTO Workers VALUES ('Shivam', 'Development', 62000);
+INSERT INTO Workers VALUES ('Siddarth', 'CustomerSuccess', 30000);
+INSERT INTO Workers VALUES ('Sahil', 'HR', 32000);
+INSERT INTO Workers VALUES ('Yashraj', 'IT Support', 42000);
+INSERT INTO Workers VALUES ('Ishant', 'Development', 60000);
+
+-- Create a view for employees from Pune
+CREATE VIEW view_emp AS
+SELECT emp_name, dept_name
+FROM Employee
+WHERE emp_city = 'Pune';
+
+-- Part B: DML Statements
+-- 1. Select all employees
+SELECT * FROM Employee;
+
+-- 2. Select all departments
+SELECT * FROM Department;
+
+-- 3. Select all workers
+SELECT * FROM Workers;
+
+-- 4. Count the total number of employees
+SELECT COUNT(*) AS total_employees 
+FROM Employee;
+
+-- 5. Find employees whose names contain 'a' and 'r'
+SELECT emp_id , emp_name 
+FROM Employee 
+WHERE emp_name LIKE '%a___'
+
+-- 6. Find a employee by employee ID 
+SELECT * FROM Employee WHERE ROWNUM <= 5; 
+
+-- 7. Select distinct department names from Employee
+SELECT DISTINCT dept_name
+FROM Employee;
+
+-- 8. Employee names starting from 'S', grouped by salary
+SELECT emp_name, dept_name, emp_salary
+FROM Workers
+WHERE emp_name LIKE 'S%'
+GROUP BY emp_name, dept_name, emp_salary;
+
+-- 9. Employees starting with 'S' and total salary greater than 30,000
+SELECT emp_name, dept_name, SUM(emp_salary) AS total_salary
+FROM Workers
+WHERE emp_name LIKE 'S%'
+GROUP BY emp_name, dept_name
+HAVING SUM(emp_salary) > 30000;
+
+-- 10. Update an employee's description
+UPDATE Employee
+SET emp_desc = 'Senior Accountant'
+WHERE emp_name = 'Siddarth'; 
+
+-- 11. Select employees whose name starts with 'S'
+SELECT emp_name, dept_name
+FROM Employee
+WHERE emp_name LIKE 'S%';
+
+-- 12. Delete an employee
+DELETE FROM Employee
+WHERE emp_name = 'Siddarth'; 
+
+-- 13. Select employees in a specific department
+SELECT emp_id, emp_name 
+FROM Employee
+WHERE dept_name = 'HR';
+
+-- 14. Find workers with salary greater than 30,000
+SELECT emp_name 
+FROM Workers
+WHERE emp_salary > 30000;
+
+-- 15. Select employees from Pune
+SELECT emp_name, dept_name 
+FROM Employee
+WHERE emp_city = 'Pune';
+
+-- 16. Retrieve the view of employees from Pune
+SELECT * FROM view_emp;
+
+-- 17. Count the total number of employees
+SELECT COUNT(*) AS total_employees 
+FROM Employee;
+
+-- 18. Find employees who work in the "IT Support" department
+SELECT emp_name 
+FROM Employee 
+WHERE dept_name = 'IT Support';
+
+-- 19. Retrieve the maximum salary of workers
+SELECT MAX(emp_salary) AS highest_salary 
+FROM Workers;
+
+-- 20. Retrieve the average salary of workers in the "Development" department
+SELECT AVG(emp_salary) AS avg_salary 
+FROM Workers 
+WHERE dept_name = 'Development';
+
+-- 21. Find all employees whose name starts with 'S'
+SELECT emp_name 
+FROM Employee 
+WHERE emp_name LIKE 'A%' AND emp_name LIKE 'V%';
+
+-- 22. Select employees and display their city, sorted by the department name
+SELECT emp_name, emp_city, dept_name 
+FROM Employee 
+ORDER BY dept_name;
+
+-- 23. Increase the salary of workers in the "Operations" department by 10%
+UPDATE Workers 
+SET emp_salary = emp_salary * 1.1 
+WHERE dept_name = 'Operations';
+
+-- 24. Retrieve the list of employees not located in 'Mumbai'
+SELECT emp_name, emp_city 
+FROM Employee 
+WHERE emp_city <> 'Mumbai';
+
+-- 25. Find employees whose city is either 'Chennai' or 'Bangalore'
+SELECT emp_name, emp_city 
+FROM Employee 
+WHERE emp_city IN ('Chennai', 'Bangalore');
+
+-- 26. List all departments that have more than 1 employee
+SELECT dept_name, COUNT(emp_name) AS total_employees 
+FROM Employee 
+GROUP BY dept_name 
+HAVING COUNT(emp_name) > 1;
+
+-- 27. Select employees from Bangalore
+SELECT emp_name, dept_name 
+FROM Employee
+WHERE emp_city = 'Bangalore';
+
+-- 28. Retrieve all employees who work in the 'Marketing' department
+SELECT emp_name 
+FROM Employee 
+WHERE dept_name = 'Marketing';
+
+-- 29. Retrieve the view of employees from Pune
+SELECT * FROM view_emp;
+
+-- 30. Drop the Department table
+DROP TABLE Department CASCADE CONSTRAINTS;
